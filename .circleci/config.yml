@@ -1,0 +1,42 @@
+version: 2.1
+
+jobs:
+  build-frontend:
+    docker:
+      - image: circleci/node:20
+    steps:
+      - checkout
+      - run:
+          name: Install frontend dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Run frontend tests
+          command: |
+            cd frontend
+            npm test
+
+  build-backend:
+    docker:
+      - image: circleci/node:20
+    steps:
+      - checkout
+      - run:
+          name: Install backend dependencies
+          command: |
+            cd backend
+            npm install
+      - run:
+          name: Start backend server
+          command: |
+            cd backend
+            npm start &
+            sleep 5
+
+workflows:
+  version: 2
+  test_and_build:
+    jobs:
+      - build-frontend
+      - build-backend
