@@ -34,9 +34,29 @@ jobs:
             npm start &
             sleep 5
 
+  run-playwright-tests:
+    docker:
+      - image: circleci/node:20
+    steps:
+      - checkout
+      - run:
+          name: Install Playwright
+          command: |
+            cd frontend
+            npx playwright install
+      - run:
+          name: Run Playwright tests
+          command: |
+            cd frontend
+            npx playwright test
+
 workflows:
   version: 2
   test_and_build:
     jobs:
       - build-frontend
       - build-backend
+      - run-playwright-tests:
+          requires:
+            - build-frontend
+            - build-backend
